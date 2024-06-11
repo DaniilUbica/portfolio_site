@@ -1,0 +1,73 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: linear-gradient(45deg, #1d1d1d, #3a3a3a);
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.code-container {
+    position: left;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 40px;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.hidden {
+    opacity: 0;
+}
+
+#hello-world {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+    transition: opacity 2s ease-in-out;
+}
+
+#particleCanvas {
+    transition: opacity 2s ease-in-out;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.fade-out {
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+}
+
+#code::after {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 20px;
+    background-color: white;
+    margin-left: 5px;
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+#code {
+    color: white;
+}

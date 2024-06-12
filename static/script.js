@@ -1,15 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
     const codeElement = document.getElementById('code');
+    const codeContainer = document.getElementById('code-container');
+    const infoContainer = document.getElementById('info-container');
+    const info = document.getElementById('info');
+    const canvas = document.getElementById('particleCanvas');
     
-    let codeText = `
+    const codeText = `
 #include <iostream>
+
 using namespace std;
 
 int main() {
-    cout << "Hello, World!" << endl;
+    cout << "Daniil Ubica" << endl;
+    cout << "Software Engineer from Moscow" << endl;
     return 0;
-}
-`.trim();
+}`
+.trim();
     
     let index = 0;
 
@@ -17,16 +23,16 @@ int main() {
         if (index < codeText.length) {
             codeElement.textContent += codeText.charAt(index);
             index++;
-            setTimeout(typeCode, 50);
+            setTimeout(typeCode, 2);
         } else {
             setTimeout(() => {
                 codeElement.classList.add('fade-out');
                 setTimeout(() => {
                     codeElement.style.display = 'none';
-                    const helloWorldElement = document.getElementById('hello-world');
-                    helloWorldElement.classList.remove('hidden');
-                    const canvas = document.getElementById('particleCanvas');
-                    canvas.classList.remove('hidden')
+                    codeContainer.style.display = 'none'
+                    info.classList.remove('hidden');
+                    canvas.classList.remove('hidden');
+                    infoContainer.classList.remove('hidden')
                     startParticleAnimation();
                 }, 2000);
             }, 1000);
@@ -35,6 +41,7 @@ int main() {
 
     typeCode();
 });
+
 
 function startParticleAnimation() {
     const canvas = document.getElementById('particleCanvas');

@@ -8,10 +8,15 @@
     <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="code-container">
+    <div class="container d-flex flex-column justify-content-center align-items-center" style="height: 100vh;">
+        <div id="code-container" class="code-container">
             <pre id="code"></pre>
-            <div id="hello-world" class="hidden">Daniil Volkov</div>
+        </div>
+        <div id="info-container" class="info-container hidden">
+            <div class="col-12 text-center">
+                <div id="name">Daniil Volkov</div>
+                <div id="info">Software Engineer from Moscow</div>
+            </div>
         </div>
     </div>
     <canvas id="particleCanvas" class="hidden"></canvas>

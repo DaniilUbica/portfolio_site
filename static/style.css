@@ -1,23 +1,36 @@
 body {
     margin: 0;
-    overflow: hidden;
     background: linear-gradient(45deg, #1d1d1d, #3a3a3a);
+    height: 200%;
     background-size: 200% 200%;
-    animation: gradientAnimation 5s ease infinite;
+    animation: gradientAnimation 3s ease infinite;
 }
 
 h1 {
     position: relative;
     color: white;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 30px;
+    font-size: 40px;
 }
 
-p {
+h2 {
     position: relative;
     color: white;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 20px;
+    font-size: 30px;
+}
+
+.navbar {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.navbar-hidden {
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+}
+.navbar-visible {
+    transform: translateY(0);
+    transition: transform 0.3s ease-in-out;
 }
 
 @keyframes gradientAnimation {
@@ -39,6 +52,43 @@ p {
     opacity: 0;
 }
 
+.projects {
+    display: none;
+}
+
+.about {
+    display: none;
+}
+
+.card {
+    color: #2b3137;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #fafbfc;
+    transition: transform 0.3s, filter 0.3s;
+}
+
+.card a {
+    color: rgb(255, 255, 255);
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #2dba4e;
+    transition: transform 0.3s, filter 0.3s;
+    border-color: #1e7933;
+}
+
+.card a:hover {
+    background-color: #30c653;
+    border-color: #218939;
+}
+
+.card a:focus {
+    background-color: #208839;
+    border-color: #218939;
+}
+
+.card:hover {
+    transform: scale(1.1);
+}
+
 .info-container {
     color: white;
     position: relative;
@@ -46,6 +96,15 @@ p {
     font-size: 40px;
     margin: 0 auto;
     transition: opacity 2s ease-in-out;
+}
+
+.info-container img {
+    transition: transform 0.3s, filter 0.3s;
+    cursor: pointer;
+}
+
+.info-container img:hover {
+    transform: scale(1.2);
 }
 
 #info {
@@ -89,3 +148,4 @@ canvas {
 #code {
     color: white;
 }
+

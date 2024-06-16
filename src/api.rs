@@ -1,6 +1,6 @@
 pub mod api {
     use reqwest::Client;
-    use serde::Deserialize;
+    use serde::{Deserialize, Serialize};
     use serde_json::json;
     use std::env;
 
@@ -16,7 +16,8 @@ pub mod api {
     struct Data {
         user: User,
     }
-
+    
+    #[allow(non_snake_case)]
     #[derive(Deserialize)]
     struct User {
         pinnedItems: PinnedItems,
@@ -27,16 +28,41 @@ pub mod api {
         nodes: Vec<Repository>,
     }
 
-    #[derive(Deserialize)]
+    #[derive(Deserialize, Serialize)]
+    struct LanguagesResponse {
+        nodes: Vec<Language>,
+    }
+
+    #[derive(Deserialize, Serialize)]
+    struct Language {
+        name: String,
+    }
+
+    #[allow(non_snake_case)]
+    #[derive(Deserialize, Serialize)]
     pub struct Repository {
         pub name: String,
         pub url: String,
         pub description: Option<String>,
+        pub stargazerCount: u32,
+        pub updatedAt: String,
+        languages: LanguagesResponse,
     }
 
     pub async fn get_repos() -> Result<Vec<Repository>, Error> {
-        let github_token = env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN not set");
-        let github_username = env::var("GITHUB_USERNAME").expect("GITHUB_USERNAME not set");
+        let github_token = match env::var("GITHUB_TOKEN") {
+            Ok(token) => token,
+            Err(err_text) => {
+                return Err(Error::new(AppError::ApiKeyNotFoundError, err_text.to_string()));
+            }
+        };
+        let github_username = match env::var("GITHUB_USERNAME") {
+            Ok(username) => username,
+            Err(err_text) => {
+                return Err(Error::new(AppError::ApiUsernameNotFoundError, err_text.to_string()));
+            }
+        };
+        
         let query_string = format!(r#"
         query {{
             user(login: "{}") {{
@@ -46,6 +72,13 @@ pub mod api {
                             name
                             description
                             url
+                            stargazerCount
+                            updatedAt
+                            languages(first: 5) {{
+                                nodes {{
+                                    name
+                                }}
+                            }}    
                         }}
                     }}
                 }}

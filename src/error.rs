@@ -4,6 +4,8 @@ pub mod error {
         ApiGetResponseError,
         ApiRequestSendError,
         ApiGetReposJsonError,
+        ApiKeyNotFoundError,
+        ApiUsernameNotFoundError,
         NotFoundError
     }
 

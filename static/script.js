@@ -12,7 +12,7 @@ using namespace std;
 
 int main() {
     cout << "Daniil Ubica" << endl;
-    cout << "Software Engineer from Moscow" << endl;
+    cout << "Software Developer from Moscow" << endl;
     return 0;
 }`
 .trim();
@@ -33,6 +33,8 @@ int main() {
                     info.classList.remove('hidden');
                     canvas.classList.remove('hidden');
                     infoContainer.classList.remove('hidden')
+                    document.getElementById('projects').style.display = 'block';
+                    document.getElementById('about').style.display = 'block';
                     startParticleAnimation();
                 }, 2000);
             }, 1000);
@@ -40,6 +42,10 @@ int main() {
     }
 
     typeCode();
+    console.log(infoContainer);
+    infoContainer.addEventListener('onClick', () => {
+        console.log('я ебал твою мамашу');
+    });
 });
 
 
@@ -112,3 +118,33 @@ function startParticleAnimation() {
         init();
     });
 }
+
+$(document).ready(function() {
+    var $navbar = $('#navbar');
+    $(window).on('scroll', function() {
+        var scrollPosition = $(this).scrollTop();
+        var windowHeight = $(this).height();
+        var documentHeight = $(document).height();
+
+        if (scrollPosition > (documentHeight - windowHeight) / 7) {
+            $navbar.removeClass('navbar-hidden').addClass('navbar-visible');
+        } else {
+            $navbar.removeClass('navbar-visible').addClass('navbar-hidden');
+        }
+    });
+});
+
+$(document).ready(function(){
+    $('a[href^="#"]').on('click', function(event) {
+        event.preventDefault();
+
+        var target = this.hash;
+        var $target = $(target);
+
+        $('html, body').stop().animate({
+            'scrollTop': $target.offset().top
+        }, 800, 'swing', function () {
+            window.location.hash = target;
+        });
+    });
+});

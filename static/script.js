@@ -23,7 +23,7 @@ int main() {
         if (index < codeText.length) {
             codeElement.textContent += codeText.charAt(index);
             index++;
-            setTimeout(typeCode, 40);
+            setTimeout(typeCode, 30);
         } else {
             setTimeout(() => {
                 codeElement.classList.add('fade-out');

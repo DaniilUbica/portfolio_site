@@ -6,6 +6,9 @@ pub mod api {
 
     use crate::error::error::{Error, AppError};
 
+    use crate::log;
+    use crate::log::LogLevel::*;
+
     #[derive(Deserialize)]
     struct PinnedRepositoriesResponse {
         data: Option<Data>,
@@ -16,7 +19,7 @@ pub mod api {
     struct Data {
         user: User,
     }
-    
+
     #[allow(non_snake_case)]
     #[derive(Deserialize)]
     struct User {
@@ -50,19 +53,22 @@ pub mod api {
     }
 
     pub async fn get_repos() -> Result<Vec<Repository>, Error> {
+        log!(INFO, "Going to get repos from github");
         let github_token = match env::var("GITHUB_TOKEN") {
             Ok(token) => token,
             Err(err_text) => {
+                log!(ERROR, "No public github key found");
                 return Err(Error::new(AppError::ApiKeyNotFoundError, err_text.to_string()));
             }
         };
         let github_username = match env::var("GITHUB_USERNAME") {
             Ok(username) => username,
             Err(err_text) => {
+                log!(ERROR, "No github username found");
                 return Err(Error::new(AppError::ApiUsernameNotFoundError, err_text.to_string()));
             }
         };
-        
+
         let query_string = format!(r#"
         query {{
             user(login: "{}") {{
@@ -78,7 +84,7 @@ pub mod api {
                                 nodes {{
                                     name
                                 }}
-                            }}    
+                            }}
                         }}
                     }}
                 }}
@@ -102,6 +108,7 @@ pub mod api {
         let res = match res {
             Ok(res) => res,
             Err(err) => {
+                log!(ERROR, format!("Error sending the request: {}", err.to_string()));
                 return Err(Error::new(AppError::ApiRequestSendError, err.to_string()))
             }
         };
@@ -110,6 +117,7 @@ pub mod api {
             let response_body: PinnedRepositoriesResponse = match res.json().await {
                 Ok(res) => res,
                 Err(err) => {
+                    log!(ERROR, format!("Error getting repositories: {}", err.to_string()));
                     return Err(Error::new(AppError::ApiGetReposJsonError, err.to_string()))
                 }
             };
@@ -117,13 +125,15 @@ pub mod api {
             if let Some(data) = response_body.data {
                 let repos = data.user.pinnedItems.nodes;
                 return Ok(repos);
-            } 
+            }
             else {
                 let err_text = response_body.errors.unwrap().join("\n");
+                log!(ERROR, format!("Error getting repositories: {}", err_text));
                 Err(Error::new(AppError::ApiGetResponseError, err_text))
             }
-        } 
+        }
         else {
+            log!(ERROR, "Error getting the response");
             Err(Error::new(AppError::ApiGetResponseError, String::from("Error getting the response")))
         }
     }

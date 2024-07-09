@@ -1,4 +1,5 @@
 pub mod error {
+
     #[derive(Clone, Debug)]
     pub enum AppError {
         ApiGetResponseError,
@@ -21,6 +22,18 @@ pub mod error {
                 error: err,
                 error_text: txt
             }
+        }
+    }
+
+    impl std::fmt::Display for Error {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.error_text)
+        }
+    }
+
+    impl std::error::Error for Error {
+        fn description(&self) -> &str {
+            &self.error_text
         }
     }
 }

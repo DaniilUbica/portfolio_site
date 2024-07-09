@@ -35,8 +35,8 @@
         </div>
         <div id="info-container" class="info-container hidden">
             <div class="col-12 text-center">
-                <div id="name">Daniil Volkov</div>
-                <div id="info">Software Developer from Moscow</div>
+                <div id="name">{{ content.name }}</div>
+                <div id="info">{{ content.description }}</div>
                 <div class="row-md-4">
                     <a href="https://github.com/DaniilUbica" target="_blank">
                         <img src="static/icons/github.png" alt="gh" width="56" height="56">
@@ -62,7 +62,7 @@
     <div class="container mt-5">
         <div id="about" class="about">
             <h1>About me</h1>
-            <h2>My name is Daniil Volkov (aka Daniil Ubica). I'm currently working as a C++ developer. I also study at the Moscow State Technological University STANKIN, majoring in Computer Science. In my free time, I study new technologies in C++ and learn the Rust language. I am also interested in computer game development and am always open to interesting proposals.</h2>
+            <h2>{{ content.about_me }}</h2>
         </div>
     </div>
     <br>

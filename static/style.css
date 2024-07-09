@@ -20,6 +20,12 @@ h2 {
     font-size: 30px;
 }
 
+form {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 15px;
+}
+
 .navbar {
     font-family: 'Courier New', Courier, monospace;
 }

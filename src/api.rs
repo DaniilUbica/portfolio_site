@@ -5,7 +5,6 @@ pub mod api {
     use std::env;
 
     use crate::error::error::{Error, AppError};
-
     use crate::log;
     use crate::log::LogLevel::*;
 

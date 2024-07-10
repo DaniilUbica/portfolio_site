@@ -2,7 +2,7 @@ use rocket::{Data, get, post, tokio, uri};
 use rocket::http::ContentType;
 use rocket::response::{content, Redirect};
 use std::io::Cursor;
-use rocket::data::ByteUnit;
+use rocket::data::{ByteUnit, ToByteUnit};
 use rocket::tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 const RESUME_FILE_PATH: &str = "./static/resume.pdf";
@@ -13,7 +13,7 @@ pub async fn upload_resume(content_type: &ContentType, data: Data<'_>) -> Result
     if content_type.is_form_data() {
         let mut file = tokio::fs::OpenOptions::new().write(true).truncate(true).open(RESUME_FILE_PATH).await?;
         let mut buffer = Vec::new();
-        let mut stream = data.open(ByteUnit::from(FILE_LIMIT_SIZE));
+        let mut stream = data.open(ByteUnit::from(FILE_LIMIT_SIZE).mebibytes());
 
         stream.read_to_end(&mut buffer).await?;
 

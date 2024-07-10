@@ -1,8 +1,6 @@
 #[macro_use] extern crate rocket;
 extern crate portfolio;
 
-use std::collections::HashMap;
-use portfolio::{error::error::Error, error::error::AppError};
 use rocket_dyn_templates::{Template, context};
 use rocket::fs::{FileServer, relative};
 use rocket::Request;
@@ -17,24 +15,13 @@ use portfolio::content::{post_content, CONTENT_JSON_PATH, Content};
 use portfolio::login::{login_get, login_post};
 use portfolio::admin::admin_get;
 use portfolio::api::api::Repository;
+use portfolio::file_upload::*;
 use portfolio::json::read_single_json;
 
 #[derive(Serialize)]
 struct TemplateContext {
     repos: Vec<Repository>,
     content: Content,
-}
-
-
-fn err_to_str(err: &Error) -> &'static str {
-    match err.error {
-        AppError::ApiGetReposJsonError => "Error getting repositories json from GitHub",
-        AppError::ApiGetResponseError => "Error getting response from GitHub",
-        AppError::ApiRequestSendError => "Error sending request to GitHub",
-        AppError::NotFoundError => "Page not Found",
-        AppError::ApiKeyNotFoundError => "No github key found",
-        AppError::ApiUsernameNotFoundError => "No github username found"
-    }
 }
 
 #[catch(404)]
@@ -59,13 +46,12 @@ async fn catcher_500(req: &Request<'_>) -> Template {
 async fn index() -> Template {
     log!(INFO, "Showing the main page");
 
-    let content: Content = read_single_json(CONTENT_JSON_PATH);
+    let content = read_single_json::<Content>(CONTENT_JSON_PATH);
+
     let repos = match get_repos().await {
-        Ok(repos) => {
-            repos
-        },
+        Ok(repos) => repos,
         Err(err) => {
-            return Template::render("error", context! { error_message: err_to_str(&err),
+            return Template::render("error", context! { error_message: err.to_str(),
                 error_concrete_message: err.error_text.clone() });
         }
     };
@@ -82,7 +68,7 @@ async fn index() -> Template {
 fn rocket() -> _ {
     rocket::build()
         .register("/", catchers![catcher_401, catcher_404, catcher_500])
-        .mount("/", routes![index, post_content, login_get, login_post, admin_get])
+        .mount("/", routes![index, post_content, login_get, login_post, admin_get, upload_resume, file_upload_success, file_upload_error])
         .mount("/static", FileServer::from(relative!("static")))
         .attach(Template::fairing())
 }

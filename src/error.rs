@@ -1,7 +1,10 @@
 pub mod error {
+    use serde::Deserialize;
+    use crate::log;
+    use crate::log::LogLevel::*;
 
-    #[derive(Clone, Debug)]
-    pub enum AppError {
+    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    pub enum ApiError {
         ApiGetResponseError,
         ApiRequestSendError,
         ApiGetReposJsonError,
@@ -10,30 +13,65 @@ pub mod error {
         NotFoundError
     }
 
-    #[derive(Clone, Debug)]
+    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    pub enum FileError {
+        FileOpenError,
+        FileReadError,
+        FileWriteError,
+        FileUploadError
+    }
+
+    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    pub enum JsonError {
+        JsonSerializeError,
+        JsonDeserializeError
+    }
+
+    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    pub enum ApplicationError {
+        ApiError(ApiError),
+        FileError(FileError),
+        JsonError(JsonError)
+    }
+
+    #[derive(Debug, Deserialize)]
     pub struct Error {
-        pub error: AppError,
+        pub error: ApplicationError,
         pub error_text: String
     }
 
     impl Error {
-        pub fn new(err: AppError, txt: String) -> Error {
+        pub fn new(err: ApplicationError, txt: String) -> Error {
+            log!(ERROR, &txt[..]);
             Error {
                 error: err,
                 error_text: txt
             }
         }
-    }
 
-    impl std::fmt::Display for Error {
-        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            write!(f, "{}", self.error_text)
-        }
-    }
-
-    impl std::error::Error for Error {
-        fn description(&self) -> &str {
-            &self.error_text
+        pub fn to_str(&self) -> &'static str {
+            match &self.error {
+                ApplicationError::ApiError(api_err) => match api_err.clone()
+                {
+                    ApiError::ApiGetReposJsonError => "Error getting repositories json from GitHub",
+                    ApiError::ApiGetResponseError => "Error getting response from GitHub",
+                    ApiError::ApiRequestSendError => "Error sending request to GitHub",
+                    ApiError::NotFoundError => "Page not Found",
+                    ApiError::ApiKeyNotFoundError => "No github key found",
+                    ApiError::ApiUsernameNotFoundError => "No github username found",
+                },
+                ApplicationError::FileError(file_err) => match file_err
+                {
+                    FileError::FileOpenError => "Error opening file",
+                    FileError::FileReadError => "Error reading file",
+                    FileError::FileWriteError => "Error writing file",
+                    FileError::FileUploadError => "Error uploading file"
+                },
+                ApplicationError::JsonError(json_err) => match json_err {
+                    JsonError::JsonSerializeError => "Error serializing json file",
+                    JsonError::JsonDeserializeError => "Error deserializing json file"
+                }
+            }
         }
     }
 }

@@ -6,7 +6,8 @@ use rocket::http::CookieJar;
 use rocket::response::{Flash, Redirect};
 use rocket_dyn_templates::Template;
 
-use crate::admin;
+use crate::{admin, log};
+use crate::log::LogLevel::*;
 
 #[derive(FromForm)]
 pub struct Login {
@@ -27,7 +28,9 @@ pub fn login_post(cookies: &CookieJar, form: Form<Login>) -> Result<Redirect, Fl
     if form.username == "admin" && form.password == pass {
         cookies.add_private(("user_id", "admin"));
         Ok(Redirect::to(uri!(admin::admin_get)))
-    } else {
+    }
+    else {
+        log!(INFO, "Somebody tried to login as admin!");
         Err(Flash::error(Redirect::to(uri!(login_get)), "Invalid username or password"))
     }
 }

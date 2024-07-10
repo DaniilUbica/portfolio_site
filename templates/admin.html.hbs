@@ -12,6 +12,7 @@
     <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
         <div class="col-12 text-center">
             <h1>Admin page</h1>
+            <h2>Site content</h2>
             <form id="content-form">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name"><br><br>
@@ -20,6 +21,13 @@
                 <label for="about_me">About me:</label>
                 <input type="text" id="about_me" name="about_me"><br><br>
                 <input type="submit" value="Content">
+            </form>
+            <br><br>
+            <h2>Resume upload</h2>
+            <form id="resume-form" action="/admin/file_upload" method="post" enctype="multipart/form-data">
+                <label for="file">Choose a PDF file:</label>
+                <input type="file" id="file" name="file" accept="application/pdf">
+                <button type="submit">Upload</button>
             </form>
         </div>
     </div>

@@ -4,7 +4,8 @@ pub mod api {
     use serde_json::json;
     use std::env;
 
-    use crate::error::error::{Error, AppError};
+    use crate::error::error::{Error, ApplicationError};
+    use crate::error::error::ApiError::*;
     use crate::log;
     use crate::log::LogLevel::*;
 
@@ -57,14 +58,14 @@ pub mod api {
             Ok(token) => token,
             Err(err_text) => {
                 log!(ERROR, "No public github key found");
-                return Err(Error::new(AppError::ApiKeyNotFoundError, err_text.to_string()));
+                return Err(Error::new(ApplicationError::ApiError(ApiKeyNotFoundError), err_text.to_string()));
             }
         };
         let github_username = match env::var("GITHUB_USERNAME") {
             Ok(username) => username,
             Err(err_text) => {
                 log!(ERROR, "No github username found");
-                return Err(Error::new(AppError::ApiUsernameNotFoundError, err_text.to_string()));
+                return Err(Error::new(ApplicationError::ApiError(ApiUsernameNotFoundError), err_text.to_string()));
             }
         };
 
@@ -107,8 +108,7 @@ pub mod api {
         let res = match res {
             Ok(res) => res,
             Err(err) => {
-                log!(ERROR, format!("Error sending the request: {}", err.to_string()));
-                return Err(Error::new(AppError::ApiRequestSendError, err.to_string()))
+                return Err(Error::new(ApplicationError::ApiError(ApiRequestSendError), err.to_string()))
             }
         };
 
@@ -116,8 +116,7 @@ pub mod api {
             let response_body: PinnedRepositoriesResponse = match res.json().await {
                 Ok(res) => res,
                 Err(err) => {
-                    log!(ERROR, format!("Error getting repositories: {}", err.to_string()));
-                    return Err(Error::new(AppError::ApiGetReposJsonError, err.to_string()))
+                    return Err(Error::new(ApplicationError::ApiError(ApiGetReposJsonError), err.to_string()))
                 }
             };
 
@@ -127,13 +126,11 @@ pub mod api {
             }
             else {
                 let err_text = response_body.errors.unwrap().join("\n");
-                log!(ERROR, format!("Error getting repositories: {}", err_text));
-                Err(Error::new(AppError::ApiGetResponseError, err_text))
+                Err(Error::new(ApplicationError::ApiError(ApiGetResponseError), err_text))
             }
         }
         else {
-            log!(ERROR, "Error getting the response");
-            Err(Error::new(AppError::ApiGetResponseError, String::from("Error getting the response")))
+            Err(Error::new(ApplicationError::ApiError(ApiGetResponseError), String::from("Error getting the response")))
         }
     }
 }

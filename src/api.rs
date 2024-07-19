@@ -56,17 +56,11 @@ pub mod api {
         log!(INFO, "Going to get repos from github");
         let github_token = match env::var("GITHUB_TOKEN") {
             Ok(token) => token,
-            Err(err_text) => {
-                log!(ERROR, "No public github key found");
-                return Err(Error::new(ApplicationError::ApiError(ApiKeyNotFoundError), err_text.to_string()));
-            }
+            Err(err_text) => return Err(Error::new(ApplicationError::ApiError(ApiKeyNotFoundError), err_text.to_string()))
         };
         let github_username = match env::var("GITHUB_USERNAME") {
             Ok(username) => username,
-            Err(err_text) => {
-                log!(ERROR, "No github username found");
-                return Err(Error::new(ApplicationError::ApiError(ApiUsernameNotFoundError), err_text.to_string()));
-            }
+            Err(err_text) => return Err(Error::new(ApplicationError::ApiError(ApiUsernameNotFoundError), err_text.to_string()))
         };
 
         let query_string = format!(r#"

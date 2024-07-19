@@ -2,8 +2,9 @@ pub mod error {
     use serde::Deserialize;
     use crate::log;
     use crate::log::LogLevel::*;
+    use crate::mail::send_file_message;
 
-    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    #[derive(Clone, Debug, Deserialize)]
     pub enum ApiError {
         ApiGetResponseError,
         ApiRequestSendError,
@@ -13,7 +14,7 @@ pub mod error {
         NotFoundError
     }
 
-    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    #[derive(Clone, Debug, Deserialize)]
     pub enum FileError {
         FileOpenError,
         FileReadError,
@@ -21,13 +22,13 @@ pub mod error {
         FileUploadError
     }
 
-    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    #[derive(Clone, Debug, Deserialize)]
     pub enum JsonError {
         JsonSerializeError,
         JsonDeserializeError
     }
 
-    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    #[derive(Clone, Debug, Deserialize)]
     pub enum ApplicationError {
         ApiError(ApiError),
         FileError(FileError),
@@ -43,6 +44,8 @@ pub mod error {
     impl Error {
         pub fn new(err: ApplicationError, txt: String) -> Error {
             log!(ERROR, &txt[..]);
+            send_file_message(&format!("Error in application: {txt}")[..], "./logs/app.log");
+
             Error {
                 error: err,
                 error_text: txt

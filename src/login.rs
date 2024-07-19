@@ -1,10 +1,8 @@
-use std::collections::HashMap;
 use std::env;
 use rocket::{FromForm, get, post, uri};
 use rocket::form::Form;
 use rocket::http::CookieJar;
-use rocket::response::{Flash, Redirect};
-use rocket_dyn_templates::Template;
+use rocket::response::{content, Flash, Redirect};
 
 use crate::{admin, log};
 use crate::log::LogLevel::*;
@@ -16,9 +14,8 @@ pub struct Login {
 }
 
 #[get("/login")]
-pub fn login_get() -> Template {
-    let context: HashMap<&str, &str> = HashMap::new();
-    Template::render("login", &context)
+pub fn login_get() -> content::RawHtml<&'static str> {
+    content::RawHtml(include_str!("../templates/login.html"))
 }
 
 #[post("/login", data = "<form>")]

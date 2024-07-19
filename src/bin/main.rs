@@ -2,7 +2,7 @@
 extern crate portfolio;
 
 use rocket_dyn_templates::{Template, context};
-use rocket::fs::{FileServer, relative};
+use rocket::fs::{FileServer};
 use rocket::Request;
 use rocket::serde::Serialize;
 
@@ -17,6 +17,7 @@ use portfolio::admin::admin_get;
 use portfolio::api::api::Repository;
 use portfolio::file_upload::*;
 use portfolio::json::read_single_json;
+use portfolio::mail::send_file_message;
 
 #[derive(Serialize)]
 struct TemplateContext {
@@ -27,18 +28,21 @@ struct TemplateContext {
 #[catch(404)]
 async fn catcher_404(req: &Request<'_>) -> Template {
     log!(FATAL, format!("Error 404: {}", req.uri()));
+    send_file_message("Fatal error in application", "./logs/app.log");
     return Template::render("error", context! { error_message: "Error 404" });
 }
 
 #[catch(401)]
 async fn catcher_401(req: &Request<'_>) -> Template {
     log!(FATAL, format!("Error 401: {}", req.uri()));
+    send_file_message("Fatal error in application", "./logs/app.log");
     return Template::render("error", context! { error_message: "Error 401" });
 }
 
 #[catch(500)]
 async fn catcher_500(req: &Request<'_>) -> Template {
     log!(FATAL, format!("Error 500: {}", req.uri()));
+    send_file_message("Fatal error in application", "./logs/app.log");
     return Template::render("error", context! { error_message: "Error 500" });
 }
 
@@ -66,9 +70,13 @@ async fn index() -> Template {
 
 #[launch]
 fn rocket() -> _ {
+    // need to check if this env variables exists, else don't start application
+    let _ = std::env::var("MAIL").expect("Got no mail env variable");
+    let _ = std::env::var("MAIL_PASSWORD").expect("Got no mail password env variable");
+
     rocket::build()
         .register("/", catchers![catcher_401, catcher_404, catcher_500])
         .mount("/", routes![index, post_content, login_get, login_post, admin_get, upload_resume, file_upload_success, file_upload_error])
-        .mount("/static", FileServer::from(relative!("static")))
+        .mount("/static", FileServer::from("static"))
         .attach(Template::fairing())
 }

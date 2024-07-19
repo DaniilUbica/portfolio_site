@@ -26,6 +26,23 @@ form {
     font-size: 15px;
 }
 
+.transparent-button {
+    background-color: transparent;
+    border: 2px solid white;
+    border-radius: 2px;
+    color: white;
+    padding: 10px 20px;
+    font-size: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.transparent-button:hover {
+    transform: scale(1.1);
+}
+
 .navbar {
     font-family: 'Courier New', Courier, monospace;
 }

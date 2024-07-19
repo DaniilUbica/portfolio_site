@@ -62,7 +62,8 @@
     <div class="container mt-5">
         <div id="about" class="about">
             <h1>About me</h1>
-            <h2>{{ content.about_me }}</h2>
+            <h2>{{ content.about_me }}</h2><br>
+            <a class="transparent-button" href="static/resume.pdf" download>My resume</a>
         </div>
     </div>
     <br>

@@ -6,3 +6,4 @@ pub mod json;
 pub mod admin;
 pub mod login;
 pub mod file_upload;
+pub mod mail;
